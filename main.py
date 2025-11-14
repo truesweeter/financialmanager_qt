@@ -88,7 +88,6 @@ class LoginDialog(QDialog):
                 current_user = self.current_user
                 print(f"Current user - {self.current_user}\n")
                 conn.commit()
-                conn.close()
                 QMessageBox.information(self, "Успешно", "Вы успешно зарегистрировались")
                 self.mainwindow = Manager()
                 self.mainwindow.show() 
@@ -99,7 +98,6 @@ class LoginDialog(QDialog):
         else:
             self.statusLabel.setText("Поля не могут быть пустыми")
             self.statusLabel.setStyleSheet("color: red;")
-
 
 
 
@@ -126,6 +124,14 @@ class Manager(QMainWindow):
         self.incomeType.hide()
         self.expensesType.hide()
         self.cancelBtn.hide()
+        self.categoryLabel.hide()
+        for button in self.expensesCategories.buttons():
+            button.hide()
+        for button in self.incomeCategories.buttons():
+            button.hide()
+            
+        self.incomeType.toggled.connect(self.on_type_toggled)
+        self.expensesType.toggled.connect(self.on_type_toggled)
 
         self.update_table()
     
@@ -147,23 +153,60 @@ class Manager(QMainWindow):
             pass
 
         self.newTransaction.clicked.connect(self.confirm_transaction)
-        
         try:
             self.cancelBtn.clicked.disconnect()
         except TypeError:
             pass
         self.cancelBtn.clicked.connect(self.cancel_transaction)
+        
+    def on_type_toggled(self, checked):
+        if self.incomeType.isChecked():
+            self.show_income_category()
+        elif self.expensesType.isChecked():
+            self.show_expenses_category()
+        else:
+            self.hide_all_categories()
+
+    def show_expenses_category(self):
+        self.categoryLabel.show()
+        for btn in self.expensesCategories.buttons():
+            btn.show()
+        for btn in self.incomeCategories.buttons():
+            btn.setChecked(False)
+            btn.hide()
+
+    def show_income_category(self):
+        self.categoryLabel.show()
+        for btn in self.incomeCategories.buttons():
+            btn.show()
+        for btn in self.expensesCategories.buttons():
+            btn.setChecked(False)
+            btn.hide()
+
+    def hide_all_categories(self):
+        self.categoryLabel.hide()
+        for group in [self.expensesCategories, self.incomeCategories]:
+            for btn in group.buttons():
+                btn.setChecked(False)
+                btn.hide()
 
 
-    
     def confirm_transaction(self):
         amount = self.amountEdit.text()
         date = self.dateEdit.text()
         description = self.descriptionEdit.text()
+        category = "Без категории"
         if self.incomeType.isChecked():
             transaction_type = "Доход"
+            for btn in self.incomeCategories.buttons():
+                if btn.isChecked():
+                    category = btn.text()
         elif self.expensesType.isChecked():
             transaction_type = "Расход"
+            for btn in self.expensesCategories.buttons():
+                if btn.isChecked():
+                    category = btn.text()
+
 
         success = True
 
@@ -190,7 +233,7 @@ class Manager(QMainWindow):
                 if date[0].isdigit() and date[1].isdigit() and date[3].isdigit() and date[4].isdigit() and date[6].isdigit() and date[7].isdigit() and date[8].isdigit() and date[9].isdigit():
                     correct = True
                     try:
-                        if int(date[0] + date[1]) > 12 or int(date[3] + date[4]) > 12:
+                        if int(date[3] + date[4]) > 12 or len(date[6:]) > 4:
                             success = False
                             self.statusLabel.setText("Пожалуйста, выберите существующую дату")
                             self.statusLabel.setStyleSheet("color: red;")
@@ -216,14 +259,18 @@ class Manager(QMainWindow):
 
         if success:
             cursor.execute("""
-                            INSERT into transactions (user_id, amount, type, description, date)
-                            VALUES (?, ?, ?, ?, ?)
-                            """, (current_user[0][0], amount, transaction_type, description, date))
+                            INSERT into transactions (user_id, amount, type, description, date, category)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                            """, (current_user[0][0], amount, transaction_type, description, date, category))
             conn.commit()
             self.statusLabel.setText("Транзакция успешно добавлена!")
             self.statusLabel.setStyleSheet("color: green;")
             print("Transaction added")
             self.cancel_transaction()
+            self.hide_all_categories()
+            self.categoryLabel.hide()
+            self.incomeType.setChecked(False)
+            self.expensesType.setChecked(False)
         print("\n")
         self.update_table()
 
@@ -251,16 +298,17 @@ class Manager(QMainWindow):
 
 
     def update_table(self):
+        cursor = conn.cursor()
         user = current_user[0][0]
         rows = cursor.execute("""
-                                SELECT amount, type, description, date from transactions
+                                SELECT amount, type, description, date, category from transactions
                                 WHERE user_id = ?
                                     """, (user,)).fetchall()
         print(f"Table updated - {rows}\n")
 
         self.transactionsTable.setRowCount(0)
-        self.transactionsTable.setColumnCount(4)
-        self.transactionsTable.setHorizontalHeaderLabels(["Сумма", "Тип", "Описание", "Дата"])
+        self.transactionsTable.setColumnCount(5)
+        self.transactionsTable.setHorizontalHeaderLabels(["Сумма", "Тип", "Описание", "Дата", "Категория"])
 
         for row_data in rows:
             row_position = self.transactionsTable.rowCount()
@@ -271,6 +319,7 @@ class Manager(QMainWindow):
                 self.transactionsTable.setItem(row_position, col, item)
 
         self.transactionsTable.resizeColumnsToContents()
+
             
 
 

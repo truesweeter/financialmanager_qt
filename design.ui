@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>820</width>
     <height>600</height>
    </rect>
   </property>
@@ -45,7 +45,7 @@
    <widget class="QPushButton" name="newTransaction">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>550</x>
       <y>80</y>
       <width>221</width>
       <height>32</height>
@@ -142,9 +142,9 @@
    <widget class="QPushButton" name="cancelBtn">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>360</y>
-      <width>221</width>
+      <x>570</x>
+      <y>520</y>
+      <width>211</width>
       <height>32</height>
      </rect>
     </property>
@@ -155,8 +155,8 @@
    <widget class="QLabel" name="statusLabel">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>460</y>
+      <x>10</x>
+      <y>480</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -168,13 +168,133 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="categoryLabel">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>340</y>
+      <width>271</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выберите категорию</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>350</y>
+      <width>291</width>
+      <height>90</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="expensesCategoryHousing">
+       <property name="text">
+        <string>Жилье</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">expensesCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="expensesCategoryTransport">
+       <property name="text">
+        <string>Транспорт</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">expensesCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="expensesCategoryFood">
+       <property name="text">
+        <string>Еда и напитки</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">expensesCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="expensesCategoryFun">
+       <property name="text">
+        <string>Развлечения</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">expensesCategories</string>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>430</y>
+      <width>281</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="incomeCategoryInvestment">
+       <property name="text">
+        <string>Инвестиции</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">incomeCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="incomeCategorySalary">
+       <property name="text">
+        <string>Зарплата</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">incomeCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="incomeCategoryEarning">
+       <property name="text">
+        <string>Доп. заработок</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">incomeCategories</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="incomeCategoryGift">
+       <property name="text">
+        <string>Подарки и бонусы</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">incomeCategories</string>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>820</width>
      <height>30</height>
     </rect>
    </property>
@@ -185,5 +305,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="typesGroup"/>
+  <buttongroup name="incomeCategories"/>
+  <buttongroup name="expensesCategories"/>
  </buttongroups>
 </ui>
